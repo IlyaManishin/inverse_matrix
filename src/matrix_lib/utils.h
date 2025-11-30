@@ -1,11 +1,12 @@
 #pragma once
 #include <stdlib.h>
 
+
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-float** inverse_matrix(float** matrix, size_t size);
+float** transpose_matrix(float **src, size_t size);
 
 #ifdef __cplusplus
 }

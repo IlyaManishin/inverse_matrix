@@ -1,1 +1,1 @@
-add_library(matrix_lib STATIC matrix_lib.c)
+add_library(matrix_lib STATIC matrix_lib.c utils.c)
