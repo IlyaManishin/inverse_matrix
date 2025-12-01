@@ -3,30 +3,46 @@
 #include "../src/matrix_lib/matrix_lib.h"
 #include "../src/matrix_lib/utils/utils.h"
 
-TEST(UtilsTest, transpose)
+
+TEST(UtilsTest, GetBMatrixFullCheck)
 {
-    size_t n = 3;
-    float **a = (float **)malloc(n * sizeof(float *));
-    for (size_t i = 0; i < n; i++)
-    {
-        a[i] = (float *)malloc(n * sizeof(float));
-        for (size_t j = 0; j < n; j++)
-            a[i][j] = i * n + j;
-    }
+    size_t size = 3;
 
-    float **t = transpose_matrix((const float **)a, n);
+    float *matrix = get_zero_matrix(size);
 
-    for (size_t i = 0; i < n; i++)
-        for (size_t j = 0; j < n; j++)
-            EXPECT_FLOAT_EQ(t[i][j], a[j][i]);
+    matrix[0 * size + 0] = 1;
+    matrix[0 * size + 1] = 2;
+    matrix[0 * size + 2] = 3;
+    matrix[1 * size + 0] = 4;
+    matrix[1 * size + 1] = 5;
+    matrix[1 * size + 2] = 6;
+    matrix[2 * size + 0] = 7;
+    matrix[2 * size + 1] = 8;
+    matrix[2 * size + 2] = 9;
 
-    for (size_t i = 0; i < n; i++)
-    {
-        free(a[i]);
-        free(t[i]);
-    }
-    free(a);
-    free(t);
+    float *tmatrix = transpose_matrix(matrix, size);
+    float *b = get_b_matrix(matrix, tmatrix, size);
+
+    float maxRow = sum_row(&matrix[0], size);
+    for (size_t i = 1; i < size; i++)
+        maxRow = std::max(sum_row(&matrix[i * size], size), maxRow);
+
+    float maxCol = sum_row(&tmatrix[0], size);
+    for (size_t i = 1; i < size; i++)
+        maxCol = std::max(sum_row(&tmatrix[i * size], size), maxCol);
+
+    float divider = maxRow * maxCol;
+
+    for (size_t i = 0; i < size; i++)
+        for (size_t j = 0; j < size; j++)
+        {
+            float expected = tmatrix[i * size + j] / divider;
+            EXPECT_FLOAT_EQ(b[i * size + j], expected);
+        }
+
+    free(matrix);
+    free(tmatrix);
+    free(b);
 }
 
 TEST(UtilsTest, MultiplyRowWithScalar)
@@ -44,46 +60,23 @@ TEST(UtilsTest, MultiplyRowWithScalar)
     }
 }
 
-TEST(UtilsTest, GetBMatrixFullCheck)
+TEST(UtilsTest, Transpose)
 {
-    size_t size = 3;
+    size_t n = 3;
+    float *a = (float *)malloc(n * n * sizeof(float));
 
-    // Исходная матрица
-    float **matrix = get_zero_matrix(size);
+    for (size_t i = 0; i < n; i++)
+        for (size_t j = 0; j < n; j++)
+            a[i * n + j] = i * n + j;
 
-    // Задаем конкретные значения для matrix
-    matrix[0][0] = 1;
-    matrix[0][1] = 2;
-    matrix[0][2] = 3;
-    matrix[1][0] = 4;
-    matrix[1][1] = 5;
-    matrix[1][2] = 6;
-    matrix[2][0] = 7;
-    matrix[2][1] = 8;
-    matrix[2][2] = 9;
+    float *t = transpose_matrix(a, n);
 
-    float **tmatrix = transpose_matrix((const float **)matrix, size);
-    // Вызываем функцию
-    float **b = get_b_matrix(matrix, tmatrix, size);
+    for (size_t i = 0; i < n; i++)
+        for (size_t j = 0; j < n; j++)
+            EXPECT_FLOAT_EQ(t[i * n + j], a[j * n + i]);
 
-    // Вычисляем ожидаемый делитель
-    float maxRow = std::max(sum_row(matrix[0], size), std::max(sum_row(matrix[1], size), sum_row(matrix[2], size)));
-    float maxCol = std::max(sum_row(tmatrix[0], size), std::max(sum_row(tmatrix[1], size), sum_row(tmatrix[2], size)));
-    float divider = maxRow * maxCol;
-
-    // Проверяем корректность каждого элемента b_matrix
-    for (size_t i = 0; i < size; i++)
-    {
-        for (size_t j = 0; j < size; j++)
-        {
-            float expected = tmatrix[i][j] / divider;
-            EXPECT_FLOAT_EQ(b[i][j], expected);
-        }
-    }
-
-    free_matrix(matrix, size);
-    free_matrix(tmatrix, size);
-    free_matrix(b, size);
+    free(a);
+    free(t);
 }
 
 TEST(RowsOps, AddRows)
@@ -150,33 +143,31 @@ TEST(SumRowTest, SingleElement)
 TEST(MatrixMulTest, Identity)
 {
     const size_t n = 3;
-    float *row = get_row(n);
 
-    float **a = get_zero_matrix(n);
-    float **ident = get_identity_matrix(n);
+    float *a = get_zero_matrix(n);
+    float *ident = get_identity_matrix(n);
 
-    a[0][0] = 2;
-    a[0][1] = 3;
-    a[0][2] = 4;
-    a[1][0] = 5;
-    a[1][1] = 6;
-    a[1][2] = 7;
-    a[2][0] = 8;
-    a[2][1] = 9;
-    a[2][2] = 10;
+    a[0 * n + 0] = 2;
+    a[0 * n + 1] = 3;
+    a[0 * n + 2] = 4;
+    a[1 * n + 0] = 5;
+    a[1 * n + 1] = 6;
+    a[1 * n + 2] = 7;
+    a[2 * n + 0] = 8;
+    a[2 * n + 1] = 9;
+    a[2 * n + 2] = 10;
 
-    float **it = transpose_matrix((const float **)ident, n);
-    float **c = mul_matrix((const float **)a, (const float **)it, row, n);
+    float *it = transpose_matrix(ident, n);
+    float *c = mul_matrix(a, it, n);
 
     for (size_t y = 0; y < n; y++)
         for (size_t x = 0; x < n; x++)
-            EXPECT_FLOAT_EQ(c[y][x], a[y][x]);
+            EXPECT_FLOAT_EQ(c[y * n + x], a[y * n + x]);
 
-    free_matrix(a, n);
-    free_matrix(ident, n);
-    free_matrix(it, n);
-    free_matrix(c, n);
-    free_row(row);
+    free(a);
+    free(ident);
+    free(it);
+    free(c);
 }
 
 int main(int argc, char **argv)

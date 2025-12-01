@@ -8,11 +8,12 @@ extern "C"
 {
 #endif
 
-    float **get_zero_matrix(size_t size);
-    float **get_identity_matrix(size_t size);
+    mat_t get_zero_matrix(size_t size);
+    mat_t get_identity_matrix(size_t size);
+    mat_t get_random_matrix(size_t size, float min_val, float max_val);
 
-    void free_matrix(float **matrix, size_t size);
-    float **get_inverse_matrix(const float **matrix, size_t size);
+    void free_matrix(mat_t matrix);
+    float **get_inverse_matrix(mat_t matrix, size_t size);
 
 #ifdef __cplusplus
 }

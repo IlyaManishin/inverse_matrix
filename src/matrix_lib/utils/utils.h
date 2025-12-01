@@ -8,16 +8,11 @@ extern "C"
 {
 #endif
 
-    matrix_t copy_matrix(const_matrix_t src, size_t size);
-    matrix_t transpose_matrix(const_matrix_t src, size_t size);
-    void div_matrix_with_sc(matrix_t matrix, size_t size, float scalar);
-    matrix_t get_b_matrix(const_matrix_t matrix, const_matrix_t tmatrix, size_t size);
-    matrix_t mul_matrix(const_matrix_t left, const_matrix_t tright, float *buf, size_t size);
-
-    matrix_t get_zero_matrix_internal(size_t size);
-    matrix_t get_identity_matrix_internal(size_t size);
-    row_t get_row(size_t size);
-    void free_row(row_t row);
+    mat_t copy_matrix(const_mat_t src, size_t size);
+    mat_t transpose_matrix(const_mat_t src, size_t size);
+    void div_matrix_with_sc(mat_t matrix, size_t size, float scalar);
+    mat_t get_b_matrix(const_mat_t matrix, const_mat_t tmatrix, size_t size);
+    mat_t mul_matrix(const_mat_t left, const_mat_t right, size_t size);
 
     void multypl_row_with_sc(float *row, size_t size, float scalar);
     void div_row_with_sc(float *row, size_t size, float scalar);

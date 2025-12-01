@@ -1,19 +1,9 @@
-#include "utils.h"
 #include "types.h"
+#include "utils.h"
 
 #include <immintrin.h>
-#include <stdlib.h>
 #include <stddef.h>
-
-float *get_row(size_t size)
-{
-    return (float *)calloc(size, sizeof(float));
-}
-
-void free_row(row_t row)
-{
-    free(row);
-}
+#include <stdlib.h>
 
 void multypl_row_with_sc(float *row, size_t size, float scalar)
 {
@@ -133,11 +123,13 @@ float sum_row(const float *row, size_t size)
     return sum;
 }
 
-float scalar_mul_row(const float *row1, const float *row2, size_t size) {
+float scalar_mul_row(const float *row1, const float *row2, size_t size) // time: ~2.4 -> ~2.0
+{
     __m256 sum_vec = _mm256_setzero_ps();
     size_t i = 0;
 
-    for (; i + 7 < size; i += 8) {
+    for (; i + 7 < size; i += 8)
+    {
         __m256 a = _mm256_loadu_ps(row1 + i);
         __m256 b = _mm256_loadu_ps(row2 + i);
         sum_vec = _mm256_add_ps(sum_vec, _mm256_mul_ps(a, b));
