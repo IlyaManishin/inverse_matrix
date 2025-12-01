@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "../src/matrix_lib/matrix_lib.h"
-#include "../src/matrix_lib/utils.h"
+#include "../src/matrix_lib/utils/utils.h"
 
 TEST(UtilsTest, transpose)
 {
@@ -84,6 +84,50 @@ TEST(UtilsTest, GetBMatrixFullCheck)
     free_matrix(matrix, size);
     free_matrix(tmatrix, size);
     free_matrix(b, size);
+}
+
+TEST(RowsOps, AddRows)
+{
+    float a[4] = {1, 2, 3, 4};
+    float b[4] = {5, 6, 7, 8};
+    add_rows(a, b, 4);
+    EXPECT_FLOAT_EQ(a[0], 6);
+    EXPECT_FLOAT_EQ(a[1], 8);
+    EXPECT_FLOAT_EQ(a[2], 10);
+    EXPECT_FLOAT_EQ(a[3], 12);
+}
+
+TEST(RowsOps, SubRows)
+{
+    float a[4] = {5, 7, 9, 11};
+    float b[4] = {1, 2, 3, 4};
+    sub_rows(a, b, 4);
+    EXPECT_FLOAT_EQ(a[0], 4);
+    EXPECT_FLOAT_EQ(a[1], 5);
+    EXPECT_FLOAT_EQ(a[2], 6);
+    EXPECT_FLOAT_EQ(a[3], 7);
+}
+
+TEST(RowsOps, MulRows)
+{
+    float a[4] = {1, 2, 3, 4};
+    float b[4] = {2, 3, 4, 5};
+    mul_rows(a, b, 4);
+    EXPECT_FLOAT_EQ(a[0], 2);
+    EXPECT_FLOAT_EQ(a[1], 6);
+    EXPECT_FLOAT_EQ(a[2], 12);
+    EXPECT_FLOAT_EQ(a[3], 20);
+}
+
+TEST(RowsOps, DivRows)
+{
+    float a[4] = {10, 20, 30, 40};
+    float b[4] = {2, 4, 5, 8};
+    div_rows(a, b, 4);
+    EXPECT_FLOAT_EQ(a[0], 5);
+    EXPECT_FLOAT_EQ(a[1], 5);
+    EXPECT_FLOAT_EQ(a[2], 6);
+    EXPECT_FLOAT_EQ(a[3], 5);
 }
 
 int main(int argc, char **argv)

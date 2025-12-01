@@ -6,8 +6,6 @@ extern "C"
 {
 #endif
 
-    float **zero_matrix(size_t size);
-    float **identity_matrix(size_t size);
     float **copy_matrix(float **src, size_t size);
     float **transpose_matrix(float **src, size_t size);
     void div_matrix_with_sc(float **matrix, size_t size, float scalar);
@@ -15,6 +13,12 @@ extern "C"
 
     void multypl_row_with_sc(float *row, size_t size, float scalar);
     void div_row_with_sc(float *row, size_t size, float scalar);
+
+    void add_rows(float *row1, const float *row2, size_t size);
+    void sub_rows(float *row1, const float *row2, size_t size);
+    void mul_rows(float *row1, const float *row2, size_t size);
+    void div_rows(float *row1, const float *row2, size_t size);
+
     float sum_row(const float *row, size_t size);
 
 #ifdef __cplusplus

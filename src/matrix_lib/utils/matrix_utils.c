@@ -16,26 +16,6 @@ float **transpose_matrix(float **src, size_t size)
     return res;
 }
 
-float **zero_matrix(size_t size)
-{
-    float **mat = (float **)malloc(size * sizeof(float *));
-    for (size_t i = 0; i < size; i++)
-    {
-        mat[i] = (float *)calloc(size, sizeof(float));
-    }
-    return mat;
-}
-
-float **identity_matrix(size_t size)
-{
-    float **mat = zero_matrix(size);
-    for (size_t i = 0; i < size; i++)
-    {
-        mat[i][i] = 1.0f;
-    }
-    return mat;
-}
-
 float **copy_matrix(float **src, size_t size)
 {
     float **res = (float **)malloc(size * sizeof(float *));
