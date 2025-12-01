@@ -14,7 +14,7 @@ TEST(UtilsTest, transpose)
             a[i][j] = i * n + j;
     }
 
-    float **t = transpose_matrix(a, n);
+    float **t = transpose_matrix((const float **)a, n);
 
     for (size_t i = 0; i < n; i++)
         for (size_t j = 0; j < n; j++)
@@ -49,7 +49,7 @@ TEST(UtilsTest, GetBMatrixFullCheck)
     size_t size = 3;
 
     // Исходная матрица
-    float **matrix = zero_matrix(size);
+    float **matrix = get_zero_matrix(size);
 
     // Задаем конкретные значения для matrix
     matrix[0][0] = 1;
@@ -62,7 +62,7 @@ TEST(UtilsTest, GetBMatrixFullCheck)
     matrix[2][1] = 8;
     matrix[2][2] = 9;
 
-    float **tmatrix = transpose_matrix(matrix, size);
+    float **tmatrix = transpose_matrix((const float **)matrix, size);
     // Вызываем функцию
     float **b = get_b_matrix(matrix, tmatrix, size);
 
@@ -128,6 +128,55 @@ TEST(RowsOps, DivRows)
     EXPECT_FLOAT_EQ(a[1], 5);
     EXPECT_FLOAT_EQ(a[2], 6);
     EXPECT_FLOAT_EQ(a[3], 5);
+}
+
+TEST(SumRowTest, BasicCases)
+{
+    float row1[] = {1.0f, 2.0f, 3.0f, 4.0f};
+    float row2[] = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f};
+    float row3[] = {0.0f, 0.0f, 0.0f, 0.0f};
+
+    EXPECT_FLOAT_EQ(sum_row(row1, 4), 10.0f);
+    EXPECT_FLOAT_EQ(sum_row(row2, 5), 15.0f);
+    EXPECT_FLOAT_EQ(sum_row(row3, 4), 0.0f);
+}
+
+TEST(SumRowTest, SingleElement)
+{
+    float row[] = {42.0f};
+    EXPECT_FLOAT_EQ(sum_row(row, 1), 42.0f);
+}
+
+TEST(MatrixMulTest, Identity)
+{
+    const size_t n = 3;
+    float *row = get_row(n);
+
+    float **a = get_zero_matrix(n);
+    float **ident = get_identity_matrix(n);
+
+    a[0][0] = 2;
+    a[0][1] = 3;
+    a[0][2] = 4;
+    a[1][0] = 5;
+    a[1][1] = 6;
+    a[1][2] = 7;
+    a[2][0] = 8;
+    a[2][1] = 9;
+    a[2][2] = 10;
+
+    float **it = transpose_matrix((const float **)ident, n);
+    float **c = mul_matrix((const float **)a, (const float **)it, row, n);
+
+    for (size_t y = 0; y < n; y++)
+        for (size_t x = 0; x < n; x++)
+            EXPECT_FLOAT_EQ(c[y][x], a[y][x]);
+
+    free_matrix(a, n);
+    free_matrix(ident, n);
+    free_matrix(it, n);
+    free_matrix(c, n);
+    free_row(row);
 }
 
 int main(int argc, char **argv)

@@ -1,24 +1,15 @@
 #include "matrix_lib.h"
+#include "utils/types.h"
 #include "utils/utils.h"
 
-float **zero_matrix(size_t size)
+float **get_zero_matrix(size_t size)
 {
-    float **mat = (float **)malloc(size * sizeof(float *));
-    for (size_t i = 0; i < size; i++)
-    {
-        mat[i] = (float *)calloc(size, sizeof(float));
-    }
-    return mat;
+    return (float **)get_zero_matrix_internal(size);
 }
 
-float **identity_matrix(size_t size)
+float **get_identity_matrix(size_t size)
 {
-    float **mat = zero_matrix(size);
-    for (size_t i = 0; i < size; i++)
-    {
-        mat[i][i] = 1.0f;
-    }
-    return mat;
+    return (float **)get_identity_matrix_internal(size);
 }
 
 void free_matrix(float **matrix, size_t size)
@@ -30,12 +21,13 @@ void free_matrix(float **matrix, size_t size)
     free(matrix);
 }
 
-float **inverse_matrix(float **matrix, size_t size)
+float **get_inverse_matrix(const float **matrix, size_t size)
 {
     if (size == 0)
         return NULL;
+    row_t buf = get_row(size);
 
-    float **tmatrix = transpose_matrix(matrix, size);
-    float **bmatrix = get_b_matrix(matrix, tmatrix, size);
+    matrix_t tmatrix = transpose_matrix(matrix, size);
+    matrix_t bmatrix = get_b_matrix(matrix, (const_matrix_t)tmatrix, size);
     return NULL;
 }
