@@ -45,8 +45,7 @@ matrix_t mul_matrix(const_matrix_t left, const_matrix_t tright, float *buf, size
     {
         for (size_t x = 0; x < size; x++)
         {
-            mul_rows_buf(left[y], tright[x], buf, size);
-            res[y][x] = sum_row(buf, size);
+            res[y][x] = scalar_mul_row(left[y], tright[x], size);
         }
     }
     return res;

@@ -29,6 +29,7 @@ extern "C"
     float sum_row(const float *row, size_t size);
 
     void mul_rows_buf(const float *row1, const float *row2, float *buf, size_t size);
+    float scalar_mul_row(const float *row1, const float *row2, size_t size);
 
 #ifdef __cplusplus
 }
