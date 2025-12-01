@@ -12,7 +12,7 @@ extern "C"
     mat_t transpose_matrix(const_mat_t src, size_t size);
     void div_matrix_with_sc(mat_t matrix, size_t size, float scalar);
     mat_t get_b_matrix(const_mat_t matrix, const_mat_t tmatrix, size_t size);
-    mat_t mul_matrix(const_mat_t left, const_mat_t right, size_t size);
+    mat_t mul_matrix(const_mat_t left, const_mat_t tright, size_t size);
 
     void multypl_row_with_sc(float *row, size_t size, float scalar);
     void div_row_with_sc(float *row, size_t size, float scalar);
