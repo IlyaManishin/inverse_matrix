@@ -1,6 +1,7 @@
 #include "types.h"
 #include "utils.h"
 
+#include <assert.h>
 #include <immintrin.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -145,3 +146,29 @@ float scalar_mul_row(const float *row1, const float *row2, size_t size) // time:
 
     return sum;
 }
+
+float scalar_mul_row_aligned(const float *row1, const float *row2, size_t size) 
+{
+    assert(size % 8 == 0);
+    
+    __m256 sum_vec = _mm256_setzero_ps();
+    size_t i = 0;
+
+    for (; i + 7 < size; i += 8)
+    {
+        __m256 a = _mm256_loadu_ps(row1 + i);
+        __m256 b = _mm256_loadu_ps(row2 + i);
+        sum_vec = _mm256_add_ps(sum_vec, _mm256_mul_ps(a, b));
+    }
+
+    float temp[8];
+    _mm256_storeu_ps(temp, sum_vec);
+    float sum = temp[0] + temp[1] + temp[2] + temp[3] +
+                temp[4] + temp[5] + temp[6] + temp[7];
+
+    for (; i < size; i++)
+        sum += row1[i] * row2[i];
+
+    return sum;
+}
+

@@ -1,8 +1,10 @@
+#include <cblas.h>
 #include <gtest/gtest.h>
 
 #include "../src/matrix_lib/matrix_lib.h"
 #include "../src/matrix_lib/utils/utils.h"
 
+static const float TOL = 1e-1f;
 
 TEST(UtilsTest, GetBMatrixFullCheck)
 {
@@ -43,6 +45,42 @@ TEST(UtilsTest, GetBMatrixFullCheck)
     free(matrix);
     free(tmatrix);
     free(b);
+}
+
+TEST(MatrixMulTest, CompareWithBLAS)
+{
+    srand(0);
+    size_t N = 100;
+    mat_t A = get_random_matrix(N, -10, 10);
+    mat_t B = get_random_matrix(N, -10, 10);
+
+    mat_t tB = transpose_matrix(B, N);
+    mat_t C1 = get_zero_matrix(N);
+    mul_matrix(A, tB, C1, N);
+
+    float *C2 = (float *)malloc(N * N * sizeof(float));
+
+    cblas_sgemm(
+        CblasRowMajor,
+        CblasNoTrans,
+        CblasNoTrans,
+        N, N, N,
+        1.0f,
+        A, N,
+        B, N,
+        0.0f,
+        C2, N);
+
+    for (int i = 0; i < N * N; i++)
+    {
+        EXPECT_NEAR(C1[i], C2[i], TOL);
+    }
+
+    free_matrix(A);
+    free_matrix(B);
+    free_matrix(tB);
+    free_matrix(C1);
+    free(C2);
 }
 
 TEST(UtilsTest, MultiplyRowWithScalar)
@@ -158,7 +196,8 @@ TEST(MatrixMulTest, Identity)
     a[2 * n + 2] = 10;
 
     float *it = transpose_matrix(ident, n);
-    float *c = mul_matrix(a, it, n);
+    float *c = get_zero_matrix(n);
+    mul_matrix(a, it, c, n);
 
     for (size_t y = 0; y < n; y++)
         for (size_t x = 0; x < n; x++)

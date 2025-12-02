@@ -21,24 +21,74 @@ mat_t get_random_matrix(size_t size, float min_val, float max_val)
     mat_t mat = (mat_t)malloc(size * size * sizeof(float));
     for (size_t i = 0; i < size * size; i++)
     {
-        float r = (float)rand() / (float)RAND_MAX; 
+        float r = (float)rand() / (float)RAND_MAX;
         mat[i] = min_val + r * (max_val - min_val);
     }
     return mat;
 }
-
 
 void free_matrix(mat_t matrix)
 {
     free(matrix);
 }
 
-float **get_inverse_matrix(mat_t matrix, size_t size)
+static inline void add_ident(mat_t dest, size_t size)
+{
+    for (size_t i = 0; i < size; i++)
+    {
+        dest[size * i + i] += 1;
+    }
+}
+
+static inline mat_t get_rmatrix(const_mat_t bmatrix, const_mat_t tmatrix, size_t size)
+{
+    mat_t rmatrix = get_zero_matrix(size);
+    mul_matrix(bmatrix, tmatrix, rmatrix, size);
+    multypl_row_with_sc(rmatrix, size, -1);
+    add_ident(rmatrix, size);
+
+    return rmatrix;
+}
+
+static mat_t get_series(mat_t rmatrix, mat_t buf, size_t size, size_t accur)
+{
+    mat_t accum = get_identity_matrix(size);
+
+    add_matrix(accum, rmatrix, size);
+    transpose_cur_mat(rmatrix, size);
+
+    for (size_t i = 0; i <= accur; i++)
+    {
+        mul_matrix(accum, rmatrix, buf, size);
+
+        mat_t temp = buf;
+        buf = accum;
+        accum = temp;
+        add_ident(accum, size);
+    }
+    return accum;
+}
+
+float *get_inverse_matrix(mat_t matrix, size_t size, size_t accur)
 {
     if (size == 0)
         return NULL;
 
+    mat_t buf = get_zero_matrix(size);
+
     mat_t tmatrix = transpose_matrix(matrix, size);
+
     mat_t bmatrix = get_b_matrix(matrix, (const_mat_t)tmatrix, size);
-    return NULL;
+
+    mat_t rmatrix = get_rmatrix(bmatrix, tmatrix, size);
+
+    mat_t series = get_series(rmatrix, buf, size, accur);
+    mat_t tbmatrix = transpose_cur_mat(bmatrix, size);
+    mul_matrix(series, tbmatrix, buf, size);
+
+    free_matrix(tmatrix);
+    free_matrix(bmatrix);
+    free_matrix(tbmatrix);
+
+    return buf;
 }

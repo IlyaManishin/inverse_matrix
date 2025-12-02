@@ -8,9 +8,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-add_compile_options(-O2 -mavx -I/usr/local/include/eigen3/)
+add_compile_options(-O2 -mavx -I/usr/local/include/eigen3/) #-NDEBUG
 enable_testing()
 
+find_package(OpenMP REQUIRED)
 find_package(BLAS REQUIRED)
 find_package(GTest REQUIRED)
 include(GoogleTest)
