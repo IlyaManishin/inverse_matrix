@@ -12,10 +12,10 @@
 #include <cblas.h>
 #include <cmath>
 
-#define SIZE 1000
+#define SIZE 2000
 #define MIN_VAL -10000
 #define MAX_VAL 10000
-#define ACCUR 20
+#define ACCUR 10
 
 void check_multy()
 {

@@ -67,7 +67,6 @@ static inline mat_t get_rmatrix(const_mat_t bmatrix, const_mat_t tmatrix, size_t
 // static mat_t get_series(mat_t rmatrix, mat_t buf, size_t size, size_t accur)
 // {
 //     mat_t accum = get_identity_matrix(size);
-//     print_matrix(rmatrix, size);
 //     add_matrix(accum, rmatrix, size);
 //     transpose_cur_mat(rmatrix, size);
 
@@ -79,7 +78,6 @@ static inline mat_t get_rmatrix(const_mat_t bmatrix, const_mat_t tmatrix, size_t
 //         buf = accum;
 //         accum = temp;
 //         add_ident(accum, size);
-//         print_matrix(accum, size);
 //     }
 //     return accum;
 // }
@@ -91,7 +89,6 @@ static mat_t get_series(mat_t rmatrix, mat_t buf, size_t size, size_t accur)
 
     for (size_t k = 1; k <= accur; k++)
     {
-        print_matrix(S, size);
         add_matrix(S, term, size);
 
         mat_t next_term = get_zero_matrix(size);

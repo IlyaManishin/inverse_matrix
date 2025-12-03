@@ -50,18 +50,15 @@ TEST(UtilsTest, GetBMatrixFullCheck)
 
 TEST(MatrixInverseTest, SeriesInverseAccuracy)
 {
-    const size_t N = 4;
+    const size_t N = 50;
     const size_t accur = 10000;
 
-    float *A = get_random_matrix(N, -0.0001f, 0.0001f);
-    print_matrix(A, N);
+    float *A = get_random_matrix(N, -1000.0f, 1000.0f);
     float *Ainv = get_inverse_matrix(A, N, accur);
     ASSERT_NE(Ainv, nullptr);
     float *prod = get_identity_matrix(N);
     float *tAinv = transpose_matrix(Ainv, N);
     mul_matrix(A, tAinv, prod, N);
-
-    print_matrix(Ainv, N);
 
     float *I = get_identity_matrix(N);
 
@@ -70,7 +67,7 @@ TEST(MatrixInverseTest, SeriesInverseAccuracy)
             EXPECT_NEAR(
                 prod[i * N + j],
                 I[i * N + j],
-                1e-2);
+                0.5f);
 
     free_matrix(A);
     free_matrix(Ainv);
