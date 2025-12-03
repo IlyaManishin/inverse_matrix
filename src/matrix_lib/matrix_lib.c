@@ -73,13 +73,10 @@ float *get_inverse_matrix(mat_t matrix, size_t size, size_t accur)
 {
     if (size == 0)
         return NULL;
-
     mat_t buf = get_zero_matrix(size);
 
     mat_t tmatrix = transpose_matrix(matrix, size);
-
-    mat_t bmatrix = get_b_matrix(matrix, (const_mat_t)tmatrix, size);
-
+    mat_t bmatrix = get_b_matrix(matrix, tmatrix, size);
     mat_t rmatrix = get_rmatrix(bmatrix, tmatrix, size);
 
     mat_t series = get_series(rmatrix, buf, size, accur);
@@ -87,7 +84,6 @@ float *get_inverse_matrix(mat_t matrix, size_t size, size_t accur)
     mul_matrix(series, tbmatrix, buf, size);
 
     free_matrix(tmatrix);
-    free_matrix(bmatrix);
     free_matrix(tbmatrix);
 
     return buf;
