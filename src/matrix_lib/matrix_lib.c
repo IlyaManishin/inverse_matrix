@@ -34,6 +34,18 @@ void free_matrix(mat_t matrix)
     free(matrix);
 }
 
+void print_matrix(float *mat, size_t size)
+{
+    for (size_t i = 0; i < size; i++)
+    {
+        for (size_t j = 0; j < size; j++)
+        {
+            printf("%f ", mat[size * i + j]);
+        }
+        printf("\n");
+    }
+}
+
 static inline void add_ident(mat_t dest, size_t size)
 {
     for (size_t i = 0; i < size; i++)
@@ -46,44 +58,51 @@ static inline mat_t get_rmatrix(const_mat_t bmatrix, const_mat_t tmatrix, size_t
 {
     mat_t rmatrix = get_zero_matrix(size);
     mul_matrix(bmatrix, tmatrix, rmatrix, size);
-    multypl_row_with_sc(rmatrix, size, -1);
+    mul_matrix_to_sc(rmatrix, size, -1);
     add_ident(rmatrix, size);
 
     return rmatrix;
 }
 
+// static mat_t get_series(mat_t rmatrix, mat_t buf, size_t size, size_t accur)
+// {
+//     mat_t accum = get_identity_matrix(size);
+//     print_matrix(rmatrix, size);
+//     add_matrix(accum, rmatrix, size);
+//     transpose_cur_mat(rmatrix, size);
+
+//     for (size_t i = 0; i <= accur; i++)
+//     {
+//         mul_matrix(accum, rmatrix, buf, size);
+
+//         mat_t temp = buf;
+//         buf = accum;
+//         accum = temp;
+//         add_ident(accum, size);
+//         print_matrix(accum, size);
+//     }
+//     return accum;
+// }
+
 static mat_t get_series(mat_t rmatrix, mat_t buf, size_t size, size_t accur)
 {
-    mat_t accum = get_identity_matrix(size);
+    mat_t S = get_identity_matrix(size);
+    mat_t term = copy_matrix(rmatrix, size);
 
-    add_matrix(accum, rmatrix, size);
-    transpose_cur_mat(rmatrix, size);
-
-    for (size_t i = 0; i <= accur; i++)
+    for (size_t k = 1; k <= accur; k++)
     {
-        mul_matrix(accum, rmatrix, buf, size);
+        print_matrix(S, size);
+        add_matrix(S, term, size);
 
-        mat_t temp = buf;
-        buf = accum;
-        accum = temp;
-        add_ident(accum, size);
+        mat_t next_term = get_zero_matrix(size);
+        mul_matrix(term, rmatrix, next_term, size);
+        free_matrix(term);
+        term = next_term;
     }
-    return accum;
+
+    free_matrix(term);
+    return S;
 }
-
-
-static void print_matrix(float *mat, size_t size)
-{
-    for (size_t i = 0; i < size; i++)
-    {
-        for (size_t j = 0; j < size; j++)
-        { 
-            printf("%f ", mat[size * i + j]);
-        }
-        printf("\n");
-    }
-}
-
 
 float *get_inverse_matrix(mat_t matrix, size_t size, size_t accur)
 {
@@ -94,7 +113,6 @@ float *get_inverse_matrix(mat_t matrix, size_t size, size_t accur)
     mat_t tmatrix = transpose_matrix(matrix, size);
     mat_t bmatrix = get_b_matrix(matrix, tmatrix, size);
     mat_t rmatrix = get_rmatrix(bmatrix, tmatrix, size);
-    print_matrix(rmatrix, size);
 
     mat_t series = get_series(rmatrix, buf, size, accur);
     mat_t tbmatrix = transpose_cur_mat(bmatrix, size);

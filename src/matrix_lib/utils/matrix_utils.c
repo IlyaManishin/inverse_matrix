@@ -2,8 +2,8 @@
 #include "types.h"
 #include "utils.h"
 
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 
 #define max(a, b) (a) > (b) ? (a) : (b)
 #define min(a, b) (a) < (b) ? (a) : (b)
@@ -50,12 +50,17 @@ void div_matrix_with_sc(mat_t matrix, size_t size, float scalar)
 
 void sub_matrix(mat_t dest, mat_t src, size_t size)
 {
-    sub_rows(dest, src, size);
+    sub_rows(dest, src, size * size);
 }
 
 void add_matrix(mat_t dest, mat_t src, size_t size)
 {
-    add_rows(dest, src, size);
+    add_rows(dest, src, size * size);
+}
+
+void mul_matrix_to_sc(mat_t dest, size_t size, float sc)
+{
+    multypl_row_with_sc(dest, size * size, sc);
 }
 
 static inline void mul_block_16(

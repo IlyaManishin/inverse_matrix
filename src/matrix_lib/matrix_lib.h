@@ -12,6 +12,7 @@ extern "C"
     mat_t get_identity_matrix(size_t size);
     mat_t get_random_matrix(size_t size, float min_val, float max_val);
 
+    void print_matrix(float *mat, size_t size);
     void free_matrix(mat_t matrix);
     float *get_inverse_matrix(mat_t matrix, size_t size, size_t accur);
 

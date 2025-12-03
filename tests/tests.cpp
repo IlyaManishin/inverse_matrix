@@ -47,24 +47,13 @@ TEST(UtilsTest, GetBMatrixFullCheck)
     free(b);
 }
 
-static void print_matrix(float *mat, size_t size)
-{
-    for (size_t i = 0; i < size; i++)
-    {
-        for (size_t j = 0; j < size; j++)
-        {
-            printf("%f", mat[size * i + j]);
-        }
-        printf("\n");
-    }
-}
 
 TEST(MatrixInverseTest, SeriesInverseAccuracy)
 {
     const size_t N = 4;
-    const size_t accur = 100;
+    const size_t accur = 10000;
 
-    float *A = get_random_matrix(N, -1.0f, 1.0f);
+    float *A = get_random_matrix(N, -0.0001f, 0.0001f);
     print_matrix(A, N);
     float *Ainv = get_inverse_matrix(A, N, accur);
     ASSERT_NE(Ainv, nullptr);
@@ -92,7 +81,7 @@ TEST(MatrixInverseTest, SeriesInverseAccuracy)
 TEST(MatrixMulTest, CompareWithBLAS)
 {
     srand(0);
-    size_t N = 100;
+    size_t N = 1000;
     mat_t A = get_random_matrix(N, -10, 10);
     mat_t B = get_random_matrix(N, -10, 10);
 
