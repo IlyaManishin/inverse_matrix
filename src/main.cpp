@@ -1,12 +1,16 @@
 #include "matrix_lib/matrix_lib.h"
 #include "matrix_lib/utils/utils.h"
 
+#include "blas_inverse.hpp"
+#include "simple_inverse.hpp"
+
 #include <chrono>
 #include <cstdlib>
-#include <iostream>
 #include <cstring>
+#include <iostream>
 
 #include <cblas.h>
+#include <cmath>
 
 #define SIZE 1000
 #define MIN_VAL -10000
@@ -61,57 +65,41 @@ void check_multy()
     free(C_blas);
 }
 
-// void check_inverse_speed() {
-//     srand(0);
+int check_inverse()
+{
+    mat_t A = get_random_matrix(SIZE, MIN_VAL, MAX_VAL);
 
-//     mat_t A = get_random_matrix(SIZE, MIN_VAL, MAX_VAL);
+    // Обычная
+    auto start = std::chrono::high_resolution_clock::now();
+    float *inv_naive = simple_inverse(A, SIZE, ACCUR);
+    auto end = std::chrono::high_resolution_clock::now();
+    std::cout << "Naive multiplication inverse: "
+              << std::chrono::duration<double>(end - start).count() << " s\n";
+    free_matrix(inv_naive);
 
-//     // Custom inverse
-//     for (int i = 0; i < 5; i++) {
-//         auto start = std::chrono::high_resolution_clock::now();
-//         mat_t invA = get_inverse_matrix(A, SIZE, ACCUR);
-//         auto end = std::chrono::high_resolution_clock::now();
+    // Блочная
+    start = std::chrono::high_resolution_clock::now();
+    float *inv_block = get_inverse_matrix(A, SIZE, ACCUR);
+    end = std::chrono::high_resolution_clock::now();
+    std::cout << "Block multiplication inverse: "
+              << std::chrono::duration<double>(end - start).count() << " s\n";
+    free_matrix(inv_block);
 
-//         std::cout << "Custom inverse time: "
-//                   << std::chrono::duration<double>(end - start).count() << " s\n";
+    // BLAS
+    start = std::chrono::high_resolution_clock::now();
+    float *inv_blas = inverse_by_series_blas(A, SIZE, ACCUR);
+    end = std::chrono::high_resolution_clock::now();
+    std::cout << "BLAS multiplication inverse: "
+              << std::chrono::duration<double>(end - start).count() << " s\n";
+    free_matrix(inv_blas);
 
-//         free_matrix(invA);
-//     }
-
-//     // BLAS method: solve A * X = I
-//     mat_t I = get_identity_matrix(SIZE);
-//     mat_t inv_blas = get_zero_matrix(SIZE);
-
-//     for (int i = 0; i < 5; i++) {
-//         memcpy(inv_blas, I, SIZE * SIZE * sizeof(float));
-
-//         auto start = std::chrono::high_resolution_clock::now();
-
-//         // Используем LU-разложение + обратную матрицу
-//         int *ipiv = (int *)malloc(SIZE * sizeof(int));
-//         int info;
-
-//         sgetrf_(&SIZE, &SIZE, inv_blas, &SIZE, ipiv, &info); // LU
-//         sgetri_(&SIZE, inv_blas, &SIZE, ipiv, nullptr, &SIZE * SIZE, &info); // inverse
-        
-
-//         auto end = std::chrono::high_resolution_clock::now();
-
-//         std::cout << "BLAS inverse time: "
-//                   << std::chrono::duration<double>(end - start).count() << " s\n";
-
-//         free(ipiv);
-//     }
-
-//     free_matrix(A);
-//     free_matrix(I);
-//     free_matrix(inv_blas);
-// }
-
+    free_matrix(A);
+    return 0;
+}
 
 int main()
 {
     srand(0);
     check_multy();
-
+    check_inverse();
 }

@@ -49,12 +49,12 @@ TEST(UtilsTest, GetBMatrixFullCheck)
 
 TEST(MatrixInverseTest, SeriesInverseAccuracy)
 {
-    const size_t N = 100;
-    const size_t accur = 1000;
+    const size_t N = 1000;
+    const size_t accur = 10;
 
     float *A = get_random_matrix(N, -1.0f, 1.0f);
     float *Ainv = get_inverse_matrix(A, N, accur);
-    ASSERT_NE(Ainv, NULL);
+    ASSERT_NE(Ainv, nullptr);
 
     float *prod = get_zero_matrix(N);
     float *tAinv = transpose_matrix(Ainv, N);
