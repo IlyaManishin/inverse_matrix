@@ -33,6 +33,11 @@ static void mat_mul_blas(const mat_t A, const mat_t B, mat_t C, size_t n)
                 n, n, n, 1.0f, A, n, B, n, 0.0f, C, n);
 }
 
+static void mat_add(const mat_t A, const mat_t B, size_t n)
+{
+    cblas_saxpy((int)(n * n), 1.0f, B, 1, A, 1);
+}
+
 static mat_t get_r_matrix(const mat_t B, const mat_t A, size_t n)
 {
     mat_t BA = mat_zero(n);
@@ -71,11 +76,6 @@ static mat_t get_b_matrix(const mat_t A, size_t n)
         B[i] *= scale;
 
     return B;
-}
-
-static void mat_add(const mat_t A, const mat_t B, size_t n)
-{
-    cblas_saxpy((int)(n * n), 1.0f, B, 1, A, 1);
 }
 
 mat_t inverse_by_series_blas(const mat_t A, size_t n, size_t accur)

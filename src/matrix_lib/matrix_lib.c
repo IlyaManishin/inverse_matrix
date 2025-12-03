@@ -2,6 +2,8 @@
 #include "utils/types.h"
 #include "utils/utils.h"
 
+#include <stdio.h>
+
 mat_t get_zero_matrix(size_t size)
 {
     mat_t mat = (mat_t)calloc(size * size, sizeof(float));
@@ -69,6 +71,20 @@ static mat_t get_series(mat_t rmatrix, mat_t buf, size_t size, size_t accur)
     return accum;
 }
 
+
+static void print_matrix(float *mat, size_t size)
+{
+    for (size_t i = 0; i < size; i++)
+    {
+        for (size_t j = 0; j < size; j++)
+        { 
+            printf("%f ", mat[size * i + j]);
+        }
+        printf("\n");
+    }
+}
+
+
 float *get_inverse_matrix(mat_t matrix, size_t size, size_t accur)
 {
     if (size == 0)
@@ -78,6 +94,7 @@ float *get_inverse_matrix(mat_t matrix, size_t size, size_t accur)
     mat_t tmatrix = transpose_matrix(matrix, size);
     mat_t bmatrix = get_b_matrix(matrix, tmatrix, size);
     mat_t rmatrix = get_rmatrix(bmatrix, tmatrix, size);
+    print_matrix(rmatrix, size);
 
     mat_t series = get_series(rmatrix, buf, size, accur);
     mat_t tbmatrix = transpose_cur_mat(bmatrix, size);

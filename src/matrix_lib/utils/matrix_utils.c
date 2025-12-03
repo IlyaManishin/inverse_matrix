@@ -3,6 +3,7 @@
 #include "utils.h"
 
 #include <string.h>
+#include <stdio.h>
 
 #define max(a, b) (a) > (b) ? (a) : (b)
 #define min(a, b) (a) < (b) ? (a) : (b)
@@ -150,13 +151,13 @@ mat_t mul_matrix(const_mat_t left, const_mat_t tright, mat_t dest, size_t size)
 
 mat_t get_b_matrix(const_mat_t matrix, const_mat_t tmatrix, size_t size)
 {
-    float maxRow = sum_row(matrix, size);
-    float maxCol = sum_row(tmatrix, size);
+    float maxRow = abs_sum_row(matrix, size);
+    float maxCol = abs_sum_row(tmatrix, size);
 
     for (size_t i = 1; i < size; i++)
     {
-        float rowSum = sum_row(matrix + size * i, size);
-        float colSum = sum_row(tmatrix + size * i, size);
+        float rowSum = abs_sum_row(matrix + size * i, size);
+        float colSum = abs_sum_row(tmatrix + size * i, size);
 
         maxRow = max(rowSum, maxRow);
         maxCol = max(colSum, maxCol);
@@ -165,6 +166,5 @@ mat_t get_b_matrix(const_mat_t matrix, const_mat_t tmatrix, size_t size)
     float divider = maxRow * maxCol;
     mat_t b_matrix = copy_matrix(tmatrix, size);
     div_matrix_with_sc(b_matrix, size, divider);
-
     return b_matrix;
 }

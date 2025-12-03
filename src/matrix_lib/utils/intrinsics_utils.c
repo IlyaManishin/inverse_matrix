@@ -6,6 +6,8 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+#define abs(a) ((a) < 0 ? (-a) : (a))
+
 void multypl_row_with_sc(float *row, size_t size, float scalar)
 {
     __m256 multipl = _mm256_set1_ps(scalar);
@@ -120,6 +122,28 @@ float sum_row(const float *row, size_t size)
 
     for (; i < size; ++i)
         sum += row[i];
+
+    return sum;
+}
+
+float abs_sum_row(const float *row, size_t size)
+{
+    __m256 sum_vec = _mm256_setzero_ps();
+    size_t i = 0;
+
+    for (; i + 7 < size; i += 8)
+    {
+        __m256 v = _mm256_loadu_ps(row + i);
+        v = _mm256_andnot_ps(_mm256_set1_ps(-0.f), v);
+        sum_vec = _mm256_add_ps(sum_vec, v);
+    }
+
+    float temp[8];
+    _mm256_storeu_ps(temp, sum_vec);
+    float sum = temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6] + temp[7];
+
+    for (; i < size; ++i)
+        sum += abs(row[i]);
 
     return sum;
 }

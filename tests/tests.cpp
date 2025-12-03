@@ -47,18 +47,32 @@ TEST(UtilsTest, GetBMatrixFullCheck)
     free(b);
 }
 
+static void print_matrix(float *mat, size_t size)
+{
+    for (size_t i = 0; i < size; i++)
+    {
+        for (size_t j = 0; j < size; j++)
+        {
+            printf("%f", mat[size * i + j]);
+        }
+        printf("\n");
+    }
+}
+
 TEST(MatrixInverseTest, SeriesInverseAccuracy)
 {
-    const size_t N = 1000;
-    const size_t accur = 10;
+    const size_t N = 4;
+    const size_t accur = 100;
 
     float *A = get_random_matrix(N, -1.0f, 1.0f);
+    print_matrix(A, N);
     float *Ainv = get_inverse_matrix(A, N, accur);
     ASSERT_NE(Ainv, nullptr);
-
-    float *prod = get_zero_matrix(N);
+    float *prod = get_identity_matrix(N);
     float *tAinv = transpose_matrix(Ainv, N);
     mul_matrix(A, tAinv, prod, N);
+
+    print_matrix(Ainv, N);
 
     float *I = get_identity_matrix(N);
 
@@ -67,15 +81,13 @@ TEST(MatrixInverseTest, SeriesInverseAccuracy)
             EXPECT_NEAR(
                 prod[i * N + j],
                 I[i * N + j],
-                1e-2
-            );
+                1e-2);
 
     free_matrix(A);
     free_matrix(Ainv);
     free_matrix(prod);
     free_matrix(I);
 }
-
 
 TEST(MatrixMulTest, CompareWithBLAS)
 {

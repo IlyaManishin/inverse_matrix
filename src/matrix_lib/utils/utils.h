@@ -25,7 +25,8 @@ extern "C"
     void mul_rows(float *row1, const float *row2, size_t size);
     void div_rows(float *row1, const float *row2, size_t size);
     float sum_row(const float *row, size_t size);
-
+    float abs_sum_row(const float *row, size_t size);
+    
     void mul_rows_buf(const float *row1, const float *row2, float *buf, size_t size);
     float scalar_mul_row_aligned(const float *row1, const float *row2, size_t size);
     float scalar_mul_row(const float *row1, const float *row2, size_t size);
