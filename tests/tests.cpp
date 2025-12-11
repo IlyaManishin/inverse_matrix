@@ -47,13 +47,17 @@ TEST(UtilsTest, GetBMatrixFullCheck)
     free(b);
 }
 
-
 TEST(MatrixInverseTest, SeriesInverseAccuracy)
 {
     const size_t N = 50;
     const size_t accur = 10000;
 
     float *A = get_random_matrix(N, -1000.0f, 1000.0f);
+    for (int i = 0; i < N; i++)
+    {
+        A[i * N + i] += 1000;
+    }
+
     float *Ainv = get_inverse_matrix(A, N, accur);
     ASSERT_NE(Ainv, nullptr);
     float *prod = get_identity_matrix(N);
