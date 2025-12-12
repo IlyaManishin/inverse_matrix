@@ -1,8 +1,8 @@
 #include "matrix_lib/matrix_lib.h"
 #include "matrix_lib/utils/utils.h"
 
-#include "blas_inverse.hpp"
-#include "simple_inverse.hpp"
+#include "test_inverse/blas_inverse.hpp"
+#include "test_inverse/simple_inverse.hpp"
 
 #include <chrono>
 #include <cstdlib>
@@ -69,7 +69,7 @@ int check_inverse()
 {
     mat_t A = get_random_matrix(SIZE, MIN_VAL, MAX_VAL);
 
-    // Обычная
+    // Simple
     auto start = std::chrono::high_resolution_clock::now();
     float *inv_naive = simple_inverse(A, SIZE, ACCUR);
     auto end = std::chrono::high_resolution_clock::now();
@@ -77,7 +77,7 @@ int check_inverse()
               << std::chrono::duration<double>(end - start).count() << " s\n";
     free_matrix(inv_naive);
 
-    // Блочная
+    // fast block matrix
     start = std::chrono::high_resolution_clock::now();
     float *inv_block = get_inverse_matrix(A, SIZE, ACCUR);
     end = std::chrono::high_resolution_clock::now();

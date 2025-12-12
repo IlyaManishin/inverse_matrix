@@ -1,6 +1,4 @@
-#include "matrix_lib/matrix_lib.h"
-#include "matrix_lib/utils/utils.h"
-
+// #include "../matrix_lib/utils/utils.h"
 #include "blas_inverse.hpp"
 
 #include <chrono>
@@ -11,7 +9,10 @@
 #include <cblas.h>
 #include <cmath>
 
-static void mat_mul(const mat_t A, const mat_t B, mat_t C, size_t n)
+typedef float *mat_t;
+typedef const float *const_mat_t;
+
+static void mat_mul(const_mat_t A, const_mat_t B, mat_t C, size_t n)
 {
     for (size_t i = 0; i < n; i++)
         for (size_t j = 0; j < n; j++)
@@ -23,13 +24,13 @@ static void mat_mul(const mat_t A, const mat_t B, mat_t C, size_t n)
         }
 }
 
-static void mat_add(mat_t A, const mat_t B, size_t n)
+static void mat_add(mat_t A, const_mat_t B, size_t n)
 {
     for (size_t i = 0; i < n * n; i++)
         A[i] += B[i];
 }
 
-static void mat_transpose(const mat_t A, mat_t out, size_t n)
+static void mat_transpose(const_mat_t A, mat_t out, size_t n)
 {
     for (size_t i = 0; i < n; i++)
         for (size_t j = 0; j < n; j++)
@@ -50,7 +51,7 @@ static mat_t mat_identity(size_t n)
     return M;
 }
 
-static mat_t get_b_matrix(const mat_t A, size_t n)
+static mat_t get_b_matrix(const_mat_t A, size_t n)
 {
     mat_t B = mat_zero(n);
     for (size_t i = 0; i < n; i++)
@@ -75,7 +76,7 @@ static mat_t get_b_matrix(const mat_t A, size_t n)
     return B;
 }
 
-static mat_t get_r_matrix(const mat_t B, const mat_t A, size_t n)
+static mat_t get_r_matrix(const_mat_t B, const_mat_t A, size_t n)
 {
     mat_t R = mat_zero(n);
     for (size_t i = 0; i < n; i++)
@@ -90,9 +91,9 @@ static mat_t get_r_matrix(const mat_t B, const mat_t A, size_t n)
     return R;
 }
 
-mat_t simple_inverse(const mat_t A, size_t n, size_t accur)
+mat_t simple_inverse(const_mat_t A, size_t n, size_t accur)
 {
-    mat_t B = get_b_matrix(A, n);
+    mat_t B = get_b_matrix((float *)A, n);
     mat_t R = get_r_matrix(B, A, n);
 
     mat_t S = mat_identity(n);
