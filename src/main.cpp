@@ -12,7 +12,7 @@
 #include <cblas.h>
 #include <cmath>
 
-#define SIZE 2000
+#define SIZE 2048
 #define MIN_VAL -10000
 #define MAX_VAL 10000
 #define ACCUR 10
